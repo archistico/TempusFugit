@@ -73,9 +73,16 @@ class Project
     #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'project')]
     private Collection $actions;
 
+    /**
+     * @var Collection<int, TimeEntry>
+     */
+    #[ORM\OneToMany(targetEntity: TimeEntry::class, mappedBy: 'project')]
+    private Collection $timeEntries;
+
     public function __construct()
     {
         $this->actions = new ArrayCollection();
+        $this->timeEntries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -306,6 +313,36 @@ class Project
             // set the owning side to null (unless already changed)
             if ($action->getProject() === $this) {
                 $action->setProject(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TimeEntry>
+     */
+    public function getTimeEntries(): Collection
+    {
+        return $this->timeEntries;
+    }
+
+    public function addTimeEntry(TimeEntry $timeEntry): static
+    {
+        if (!$this->timeEntries->contains($timeEntry)) {
+            $this->timeEntries->add($timeEntry);
+            $timeEntry->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTimeEntry(TimeEntry $timeEntry): static
+    {
+        if ($this->timeEntries->removeElement($timeEntry)) {
+            // set the owning side to null (unless already changed)
+            if ($timeEntry->getProject() === $this) {
+                $timeEntry->setProject(null);
             }
         }
 
