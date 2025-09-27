@@ -15,9 +15,8 @@ use Doctrine\DBAL\Types\Types;
 class Action
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'NONE')]
-    private ?Uuid $id = null;
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true)]
+    private ?string $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'actions')]
     #[ORM\JoinColumn(nullable: false)]
@@ -60,7 +59,7 @@ class Action
 
     public function __construct()
     {
-        $this->id = Uuid::v7(); // <— genera qui
+        $this->id = Uuid::v7()->toRfc4122();
         $this->timeEntries = new ArrayCollection();
     }
 
@@ -69,17 +68,7 @@ class Action
         return $this->getTitolo() ?? '';
     }
 
-    public function getId(): ?Uuid
-    {
-        return $this->id;
-    }
-
-    public function setId(Uuid $id): static
-    {
-        $this->id = $id;
-
-        return $this;
-    }
+    public function getId(): ?string { return $this->id; }
 
     public function getProject(): ?Project
     {

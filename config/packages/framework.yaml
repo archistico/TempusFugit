@@ -3,7 +3,15 @@ framework:
     secret: '%env(APP_SECRET)%'
 
     # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    #session: true
+
+    session:
+        handler_id: null
+        name: TFSESSID
+        cookie_samesite: lax
+        cookie_secure: auto
+        storage_factory_id: session.storage.factory.native
+    csrf_protection: true
 
     #esi: true
     #fragments: true

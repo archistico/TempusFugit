@@ -8,14 +8,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'NONE')]
-	private ?Uuid $id = null;
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true)]
+    private ?string $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $denominazione = null;
@@ -70,7 +70,7 @@ class Client
 
     public function __construct()
     {
-        $this->id = Uuid::v7(); 
+        $this->id = Uuid::v7()->toRfc4122(); 
         $this->projects = new ArrayCollection();
         $this->communications = new ArrayCollection();
         $this->users = new ArrayCollection();
@@ -81,17 +81,7 @@ class Client
         return $this->getDenominazione() ?: 'Cliente #'.$this->getId();
     }
 
-    public function getId(): ?Uuid
-    {
-        return $this->id;
-    }
-
-    public function setId(Uuid $id): static
-    {
-        $this->id = $id;
-
-        return $this;
-    }
+    public function getId(): ?string { return $this->id; }
 
     public function getDenominazione(): ?string
     {

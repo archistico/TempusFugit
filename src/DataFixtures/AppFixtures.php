@@ -35,17 +35,14 @@ class AppFixtures extends Fixture
         // 1) ACTION STATUS (workflow base)
         // -----------------------------------------------------------------------------
         $stDaIniziare = (new ActionStatus())
-            ->setId(Uuid::v7())
             ->setDescrizione('Da iniziare')
             ->setOrdine(1)
             ->setChiusura(false);
         $stInCorso = (new ActionStatus())
-            ->setId(Uuid::v7())
             ->setDescrizione('In corso')
             ->setOrdine(2)
             ->setChiusura(false);
         $stCompletato = (new ActionStatus())
-            ->setId(Uuid::v7())
             ->setDescrizione('Completato')
             ->setOrdine(3)
             ->setChiusura(true);
@@ -58,19 +55,16 @@ class AppFixtures extends Fixture
         // 2) ACTION TYPES (categorie attività)
         // -----------------------------------------------------------------------------
         $tSviluppo = (new ActionType())
-            ->setId(Uuid::v7())
             ->setDescrizione('Sviluppo')
             ->setColore('#2F6CA3')
             ->setIcona('code')
             ->setFatturabileDefault(true);
         $tRevisione = (new ActionType())
-            ->setId(Uuid::v7())
             ->setDescrizione('Revisione')
             ->setColore('#5E5850')
             ->setIcona('review')
             ->setFatturabileDefault(true);
         $tRiunione = (new ActionType())
-            ->setId(Uuid::v7())
             ->setDescrizione('Riunione')
             ->setColore('#E0A04B')
             ->setIcona('users')
@@ -84,7 +78,6 @@ class AppFixtures extends Fixture
         // 3) CLIENTI
         // -----------------------------------------------------------------------------
         $cliA = (new Client())
-            ->setId(Uuid::v7())
             ->setDenominazione('Alfa S.r.l.')
             ->setPiva('01234567890')
             ->setCf(null)
@@ -98,7 +91,6 @@ class AppFixtures extends Fixture
             ->setUpdatedAt($now);
 
         $cliB = (new Client())
-            ->setId(Uuid::v7())
             ->setDenominazione('Beta Consulting')
             ->setPiva('09876543210')
             ->setCf(null)
@@ -118,14 +110,12 @@ class AppFixtures extends Fixture
         // 4) PROJECT TYPES + TEMPLATE AZIONI
         // -----------------------------------------------------------------------------
         $ptSviluppo = (new ProjectType())
-            ->setId(Uuid::v7())
             ->setDescrizione('Sviluppo software')
             ->setCostoOrarioDefault('60.00')
             ->setVersion(1);
         $em->persist($ptSviluppo);
 
         $ptGrafica = (new ProjectType())
-            ->setId(Uuid::v7())
             ->setDescrizione('Grafica')
             ->setCostoOrarioDefault('45.00')
             ->setVersion(1);
@@ -133,7 +123,6 @@ class AppFixtures extends Fixture
 
         // Template azioni: SVILUPPO
         $tpl1 = (new ProjectTypeActionTemplate())
-            ->setId(Uuid::v7())
             ->setProjectType($ptSviluppo)
             ->setTitolo('Analisi requisiti')
             ->setDescrizione('Kickoff e raccolta requisiti iniziali')
@@ -142,7 +131,6 @@ class AppFixtures extends Fixture
             ->setStatus($stDaIniziare)
             ->setOrdine(1);
         $tpl2 = (new ProjectTypeActionTemplate())
-            ->setId(Uuid::v7())
             ->setProjectType($ptSviluppo)
             ->setTitolo('Setup progetto')
             ->setDescrizione('Repo, CI, impalcatura Symfony')
@@ -151,7 +139,6 @@ class AppFixtures extends Fixture
             ->setStatus($stDaIniziare)
             ->setOrdine(2);
         $tpl3 = (new ProjectTypeActionTemplate())
-            ->setId(Uuid::v7())
             ->setProjectType($ptSviluppo)
             ->setTitolo('Sviluppo MVP')
             ->setDescrizione('Funzionalità core')
@@ -160,7 +147,6 @@ class AppFixtures extends Fixture
             ->setStatus($stDaIniziare)
             ->setOrdine(3);
         $tpl4 = (new ProjectTypeActionTemplate())
-            ->setId(Uuid::v7())
             ->setProjectType($ptSviluppo)
             ->setTitolo('Revisione UAT')
             ->setDescrizione('Raccolta feedback cliente')
@@ -171,7 +157,6 @@ class AppFixtures extends Fixture
 
         // Template azioni: GRAFICA
         $tplG1 = (new ProjectTypeActionTemplate())
-            ->setId(Uuid::v7())
             ->setProjectType($ptGrafica)
             ->setTitolo('Realizzazione preventivo')
             ->setDescrizione(null)
@@ -180,7 +165,6 @@ class AppFixtures extends Fixture
             ->setStatus($stDaIniziare)
             ->setOrdine(1);
         $tplG2 = (new ProjectTypeActionTemplate())
-            ->setId(Uuid::v7())
             ->setProjectType($ptGrafica)
             ->setTitolo('Definizione obiettivi')
             ->setDescrizione(null)
@@ -189,7 +173,6 @@ class AppFixtures extends Fixture
             ->setStatus($stDaIniziare)
             ->setOrdine(2);
         $tplG3 = (new ProjectTypeActionTemplate())
-            ->setId(Uuid::v7())
             ->setProjectType($ptGrafica)
             ->setTitolo('Bozza grafica')
             ->setDescrizione(null)
@@ -198,7 +181,6 @@ class AppFixtures extends Fixture
             ->setStatus($stDaIniziare)
             ->setOrdine(3);
         $tplG4 = (new ProjectTypeActionTemplate())
-            ->setId(Uuid::v7())
             ->setProjectType($ptGrafica)
             ->setTitolo('Modifiche bozza')
             ->setDescrizione(null)
@@ -207,7 +189,6 @@ class AppFixtures extends Fixture
             ->setStatus($stDaIniziare)
             ->setOrdine(4);
         $tplG5 = (new ProjectTypeActionTemplate())
-            ->setId(Uuid::v7())
             ->setProjectType($ptGrafica)
             ->setTitolo('Grafica definitiva')
             ->setDescrizione(null)
@@ -224,7 +205,6 @@ class AppFixtures extends Fixture
         // 5) USERS
         // -----------------------------------------------------------------------------
         $admin = (new User())
-            ->setId(Uuid::v7())
             ->setEmail('admin@tempusfugit.local')
             ->setRoles(['ROLE_ADMIN'])
             ->setIsActive(true);
@@ -232,7 +212,6 @@ class AppFixtures extends Fixture
         $em->persist($admin);
 
         $clientUser = (new User())
-            ->setId(Uuid::v7())
             ->setEmail('cliente@alfasrl.it')
             ->setRoles(['ROLE_CLIENT'])
             ->setCliente($cliA)
@@ -244,7 +223,6 @@ class AppFixtures extends Fixture
         // 6) PROGETTI
         // -----------------------------------------------------------------------------
         $p1 = (new Project())
-            ->setId(Uuid::v7())
             ->setClient($cliA)
             ->setType($ptSviluppo)
             ->setTitolo('Intranet gestionale')
@@ -264,7 +242,6 @@ class AppFixtures extends Fixture
         $em->persist($p1);
 
         $p2 = (new Project())
-            ->setId(Uuid::v7())
             ->setClient($cliB)
             ->setType($ptGrafica)
             ->setTitolo('Branding & Kit social')
@@ -285,7 +262,6 @@ class AppFixtures extends Fixture
         // 7) AZIONI (per p1 creiamo qualche azione già presente)
         // -----------------------------------------------------------------------------
         $a1 = (new Action())
-            ->setId(Uuid::v7())
             ->setProject($p1)
             ->setTitolo('Analisi requisiti')
             ->setDescrizione('Workshop iniziale con reparti')
@@ -299,7 +275,6 @@ class AppFixtures extends Fixture
         $em->persist($a1);
 
         $a2 = (new Action())
-            ->setId(Uuid::v7())
             ->setProject($p1)
             ->setTitolo('Setup progetto')
             ->setDescrizione('Repo + CI + impalcatura Symfony')
@@ -313,7 +288,6 @@ class AppFixtures extends Fixture
         $em->persist($a2);
 
         $a3 = (new Action())
-            ->setId(Uuid::v7())
             ->setProject($p1)
             ->setTitolo('Sviluppo MVP')
             ->setDescrizione('Auth, CRUD principali, report base')
@@ -331,7 +305,6 @@ class AppFixtures extends Fixture
         // -----------------------------------------------------------------------------
         // Tempo su a1 (in corso + uno chiuso)
         $t1 = (new TimeEntry())
-            ->setId(Uuid::v7())
             ->setProject($p1)
             ->setProjectAction($a1) // << property NON "action"
             ->setStartAt($now->sub(new DateInterval('PT2H')))
@@ -343,7 +316,6 @@ class AppFixtures extends Fixture
 
         // Timer ancora aperto su a1 (endAt null)
         $t2 = (new TimeEntry())
-            ->setId(Uuid::v7())
             ->setProject($p1)
             ->setProjectAction($a1)
             ->setStartAt($now->sub(new DateInterval('PT20M')))
@@ -355,7 +327,6 @@ class AppFixtures extends Fixture
 
         // Tempo su a2
         $t3 = (new TimeEntry())
-            ->setId(Uuid::v7())
             ->setProject($p1)
             ->setProjectAction($a2)
             ->setStartAt($now->sub(new DateInterval('P1DT3H')))
@@ -370,7 +341,6 @@ class AppFixtures extends Fixture
         // -----------------------------------------------------------------------------
         // Debito preventivo creato all’apertura progetto (simuliamo quello che l’event-subscriber farà)
         $mov1 = (new LedgerMovement())
-            ->setId(Uuid::v7())
             ->setProject($p1)
             ->setData($now->sub(new DateInterval('P20D')))
             ->setTipo('DEBITO')
@@ -384,7 +354,6 @@ class AppFixtures extends Fixture
 
         // Spesa hosting
         $mov2 = (new LedgerMovement())
-            ->setId(Uuid::v7())
             ->setProject($p1)
             ->setData($now->sub(new DateInterval('P10D')))
             ->setTipo('DEBITO')
@@ -397,7 +366,6 @@ class AppFixtures extends Fixture
 
         // Incasso acconto
         $mov3 = (new LedgerMovement())
-            ->setId(Uuid::v7())
             ->setProject($p1)
             ->setData($now->sub(new DateInterval('P7D')))
             ->setTipo('CREDITO')
@@ -412,7 +380,6 @@ class AppFixtures extends Fixture
         // 10) COMUNICAZIONI
         // -----------------------------------------------------------------------------
         $c1 = (new Communication())
-            ->setId(Uuid::v7())
             ->setProject($p1)
             ->setClient($cliA)
             ->setData($now->sub(new DateInterval('P2D')))
@@ -420,7 +387,6 @@ class AppFixtures extends Fixture
         $em->persist($c1);
 
         $c2 = (new Communication())
-            ->setId(Uuid::v7())
             ->setProject($p2)
             ->setClient($cliB)
             ->setData($now->sub(new DateInterval('P1D')))
@@ -431,15 +397,12 @@ class AppFixtures extends Fixture
         // 11) SETTINGS
         // -----------------------------------------------------------------------------
         $s1 = (new Setting())
-            ->setId(Uuid::v7())
             ->setChiave('rounding.minutes')
             ->setValore('15'); // arrotondamento registrazioni tempo a 15 minuti
         $s2 = (new Setting())
-            ->setId(Uuid::v7())
             ->setChiave('billing.currency')
             ->setValore('EUR');
         $s3 = (new Setting())
-            ->setId(Uuid::v7())
             ->setChiave('projects.base_path')
             ->setValore('/srv/projects');
 
