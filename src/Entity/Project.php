@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use App\Entity\ActionStatus;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 class Project
@@ -46,8 +47,9 @@ class Project
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dataFineReale = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $stato = null;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)] 
+    private ?ActionStatus $stato = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $pathProgetto = null;
@@ -215,17 +217,9 @@ class Project
         return $this;
     }
 
-    public function getStato(): ?string
-    {
-        return $this->stato;
-    }
-
-    public function setStato(string $stato): static
-    {
-        $this->stato = $stato;
-
-        return $this;
-    }
+    public function getStato(): ?ActionStatus { return $this->stato; }
+    
+    public function setStato(?ActionStatus $stato): self { $this->stato = $stato; return $this; }
 
     public function getPathProgetto(): ?string
     {

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250927181458 extends AbstractMigration
+final class Version20250927190349 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -37,16 +37,17 @@ final class Version20250927181458 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_F9AFB5EB166D1F9C ON communication (project_id)');
         $this->addSql('CREATE INDEX IDX_F9AFB5EB19EB6921 ON communication (client_id)');
         $this->addSql('CREATE TABLE ledger_movement (id VARCHAR(36) NOT NULL, project_id VARCHAR(36) NOT NULL, data DATE DEFAULT NULL --(DC2Type:date_immutable)
-        , tipo VARCHAR(255) NOT NULL, categoria VARCHAR(255) NOT NULL, importo NUMERIC(12, 2) NOT NULL, descrizione VARCHAR(255) DEFAULT NULL, nota VARCHAR(255) DEFAULT NULL, iva_percent NUMERIC(5, 2) NOT NULL, pagato BOOLEAN NOT NULL, PRIMARY KEY(id), CONSTRAINT FK_A5CD900D166D1F9C FOREIGN KEY (project_id) REFERENCES project (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        , tipo VARCHAR(255) NOT NULL, importo NUMERIC(12, 2) NOT NULL, descrizione VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id), CONSTRAINT FK_A5CD900D166D1F9C FOREIGN KEY (project_id) REFERENCES project (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_A5CD900D166D1F9C ON ledger_movement (project_id)');
-        $this->addSql('CREATE TABLE project (id VARCHAR(36) NOT NULL, client_id VARCHAR(36) NOT NULL, type_id VARCHAR(36) NOT NULL, titolo VARCHAR(255) NOT NULL, descrizione VARCHAR(255) DEFAULT NULL, tipologia_fatturazione VARCHAR(255) NOT NULL, note VARCHAR(255) DEFAULT NULL, data_inizio DATE DEFAULT NULL --(DC2Type:date_immutable)
+        $this->addSql('CREATE TABLE project (id VARCHAR(36) NOT NULL, client_id VARCHAR(36) NOT NULL, type_id VARCHAR(36) NOT NULL, stato_id VARCHAR(36) NOT NULL, titolo VARCHAR(255) NOT NULL, descrizione VARCHAR(255) DEFAULT NULL, tipologia_fatturazione VARCHAR(255) NOT NULL, note VARCHAR(255) DEFAULT NULL, data_inizio DATE DEFAULT NULL --(DC2Type:date_immutable)
         , data_fine_stimata DATE DEFAULT NULL --(DC2Type:date_immutable)
         , data_fine_reale DATE DEFAULT NULL --(DC2Type:date_immutable)
-        , stato VARCHAR(255) NOT NULL, path_progetto VARCHAR(255) DEFAULT NULL, percent_avanz DOUBLE PRECISION NOT NULL, importo_preventivo NUMERIC(12, 2) NOT NULL, condizioni_pagamento VARCHAR(255) DEFAULT NULL, created_at DATETIME NOT NULL --(DC2Type:datetime_immutable)
+        , path_progetto VARCHAR(255) DEFAULT NULL, percent_avanz DOUBLE PRECISION NOT NULL, importo_preventivo NUMERIC(12, 2) NOT NULL, condizioni_pagamento VARCHAR(255) DEFAULT NULL, created_at DATETIME NOT NULL --(DC2Type:datetime_immutable)
         , updated_at DATETIME DEFAULT NULL --(DC2Type:datetime_immutable)
-        , PRIMARY KEY(id), CONSTRAINT FK_2FB3D0EE19EB6921 FOREIGN KEY (client_id) REFERENCES client (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_2FB3D0EEC54C8C93 FOREIGN KEY (type_id) REFERENCES project_type (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        , PRIMARY KEY(id), CONSTRAINT FK_2FB3D0EE19EB6921 FOREIGN KEY (client_id) REFERENCES client (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_2FB3D0EEC54C8C93 FOREIGN KEY (type_id) REFERENCES project_type (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_2FB3D0EE6A65DCA5 FOREIGN KEY (stato_id) REFERENCES action_status (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_2FB3D0EE19EB6921 ON project (client_id)');
         $this->addSql('CREATE INDEX IDX_2FB3D0EEC54C8C93 ON project (type_id)');
+        $this->addSql('CREATE INDEX IDX_2FB3D0EE6A65DCA5 ON project (stato_id)');
         $this->addSql('CREATE TABLE project_type (id VARCHAR(36) NOT NULL, descrizione VARCHAR(255) NOT NULL, costo_orario_default NUMERIC(10, 2) DEFAULT NULL, version INTEGER NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE project_type_action_template (id VARCHAR(36) NOT NULL, project_type_id VARCHAR(36) DEFAULT NULL, action_type_id VARCHAR(36) DEFAULT NULL, status_id VARCHAR(36) DEFAULT NULL, titolo VARCHAR(255) NOT NULL, descrizione VARCHAR(255) DEFAULT NULL, stima_min INTEGER NOT NULL, ordine INTEGER NOT NULL, PRIMARY KEY(id), CONSTRAINT FK_9160C83E535280F6 FOREIGN KEY (project_type_id) REFERENCES project_type (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_9160C83E1FEE0472 FOREIGN KEY (action_type_id) REFERENCES action_type (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_9160C83E6BF700BD FOREIGN KEY (status_id) REFERENCES action_status (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_9160C83E535280F6 ON project_type_action_template (project_type_id)');

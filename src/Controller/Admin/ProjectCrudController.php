@@ -45,12 +45,6 @@ class ProjectCrudController extends AbstractCrudController
             'Personalizzate' => 'PERSONAL',
         ];
 
-        $stati = [
-            'In corso'    => 'In corso',
-            'Completato'  => 'Completato',
-            'Sospeso'     => 'Sospeso',
-        ];
-
         // campo “% avanzamento” SOLO visualizzazione (supponiamo salvato 0..100)
         $percentIndex = NumberField::new('percentAvanz', '%')
             ->setNumDecimals(0)
@@ -64,10 +58,7 @@ class ProjectCrudController extends AbstractCrudController
                 MoneyField::new('importoPreventivo')->setCurrency('EUR')->setLabel('Preventivo'),
                 DateField::new('dataInizio')->setLabel('Inizio'),
                 DateField::new('dataFineStimata')->setLabel('Fine stim.'),
-                ChoiceField::new('stato')
-                    ->setLabel('Stato')
-                    ->setChoices($stati),
-                    //->onlyOnForms(),
+                AssociationField::new('stato')->setLabel('Stato')->autocomplete(),
                 $percentIndex,
             ];
         }
@@ -88,7 +79,7 @@ class ProjectCrudController extends AbstractCrudController
             DateField::new('dataFineStimata')->setLabel('Data fine stimata')->hideOnIndex(),
             DateField::new('dataFineReale')->setLabel('Data fine reale')->hideOnIndex(),
 
-            ChoiceField::new('stato')->setChoices($stati)->hideOnIndex(),
+            AssociationField::new('stato')->setLabel('Stato')->autocomplete(),
             TextField::new('pathProgetto')->setLabel('Path su disco')->hideOnIndex(),
             TextareaField::new('note')->onlyOnForms(),
 
@@ -128,11 +119,7 @@ class ProjectCrudController extends AbstractCrudController
             ]))
             ->add(DateTimeFilter::new('dataInizio')->setLabel('Data inizio'))
             ->add(DateTimeFilter::new('dataFineStimata')->setLabel('Fine stimata'))
-            ->add(ChoiceFilter::new('stato')->setChoices([
-                'In corso' => 'In corso',
-                'Completato' => 'Completato',
-                'Sospeso' => 'Sospeso',
-            ]))
+            ->add(EntityFilter::new('stato')->setLabel('Stato'))
             ->add(NumericFilter::new('importoPreventivo')->setLabel('Importo'));
     }
 }

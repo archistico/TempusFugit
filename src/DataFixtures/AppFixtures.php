@@ -27,392 +27,248 @@ class AppFixtures extends Fixture
     {
     }
 
-    public function load(ObjectManager $em): void
+    public function load(ObjectManager $om): void
     {
         $now = new DateTimeImmutable();
 
-        // -----------------------------------------------------------------------------
-        // 1) ACTION STATUS (workflow base)
-        // -----------------------------------------------------------------------------
-        $stDaIniziare = (new ActionStatus())
-            ->setDescrizione('Da iniziare')
-            ->setOrdine(1)
-            ->setChiusura(false);
-        $stInCorso = (new ActionStatus())
-            ->setDescrizione('In corso')
-            ->setOrdine(2)
-            ->setChiusura(false);
-        $stCompletato = (new ActionStatus())
-            ->setDescrizione('Completato')
-            ->setOrdine(3)
-            ->setChiusura(true);
-
-        $em->persist($stDaIniziare);
-        $em->persist($stInCorso);
-        $em->persist($stCompletato);
-
-        // -----------------------------------------------------------------------------
-        // 2) ACTION TYPES (categorie attività)
-        // -----------------------------------------------------------------------------
-        $tSviluppo = (new ActionType())
-            ->setDescrizione('Sviluppo')
-            ->setColore('#2F6CA3')
-            ->setIcona('code')
-            ->setFatturabileDefault(true);
-        $tRevisione = (new ActionType())
-            ->setDescrizione('Revisione')
-            ->setColore('#5E5850')
-            ->setIcona('review')
-            ->setFatturabileDefault(true);
-        $tRiunione = (new ActionType())
-            ->setDescrizione('Riunione')
-            ->setColore('#E0A04B')
-            ->setIcona('users')
-            ->setFatturabileDefault(false);
-
-        $em->persist($tSviluppo);
-        $em->persist($tRevisione);
-        $em->persist($tRiunione);
-
-        // -----------------------------------------------------------------------------
-        // 3) CLIENTI
-        // -----------------------------------------------------------------------------
-        $cliA = (new Client())
-            ->setDenominazione('Alfa S.r.l.')
-            ->setPiva('01234567890')
-            ->setCf(null)
-            ->setEmail('contatti@alfasrl.it')
-            ->setTelefono('+39 011 1234567')
-            ->setVia('Via Roma 1')
-            ->setCap('10100')
-            ->setCitta('Torino')
-            ->setNote('Cliente storico; pagamento a 60 giorni.')
-            ->setCreatedAt($now)
-            ->setUpdatedAt($now);
-
-        $cliB = (new Client())
-            ->setDenominazione('Beta Consulting')
-            ->setPiva('09876543210')
-            ->setCf(null)
-            ->setEmail('info@betaconsulting.it')
-            ->setTelefono('+39 02 2345678')
-            ->setVia('Corso Milano 25')
-            ->setCap('20100')
-            ->setCitta('Milano')
-            ->setNote('Nuovo cliente, priorità alta.')
-            ->setCreatedAt($now)
-            ->setUpdatedAt($now);
-
-        $em->persist($cliA);
-        $em->persist($cliB);
-
-        // -----------------------------------------------------------------------------
-        // 4) PROJECT TYPES + TEMPLATE AZIONI
-        // -----------------------------------------------------------------------------
-        $ptSviluppo = (new ProjectType())
-            ->setDescrizione('Sviluppo software')
-            ->setCostoOrarioDefault('60.00')
-            ->setVersion(1);
-        $em->persist($ptSviluppo);
-
-        $ptGrafica = (new ProjectType())
-            ->setDescrizione('Grafica')
-            ->setCostoOrarioDefault('45.00')
-            ->setVersion(1);
-        $em->persist($ptGrafica);
-
-        // Template azioni: SVILUPPO
-        $tpl1 = (new ProjectTypeActionTemplate())
-            ->setProjectType($ptSviluppo)
-            ->setTitolo('Analisi requisiti')
-            ->setDescrizione('Kickoff e raccolta requisiti iniziali')
-            ->setStimaMin(120)
-            ->setActionType($tRiunione)
-            ->setStatus($stDaIniziare)
-            ->setOrdine(1);
-        $tpl2 = (new ProjectTypeActionTemplate())
-            ->setProjectType($ptSviluppo)
-            ->setTitolo('Setup progetto')
-            ->setDescrizione('Repo, CI, impalcatura Symfony')
-            ->setStimaMin(180)
-            ->setActionType($tSviluppo)
-            ->setStatus($stDaIniziare)
-            ->setOrdine(2);
-        $tpl3 = (new ProjectTypeActionTemplate())
-            ->setProjectType($ptSviluppo)
-            ->setTitolo('Sviluppo MVP')
-            ->setDescrizione('Funzionalità core')
-            ->setStimaMin(900)
-            ->setActionType($tSviluppo)
-            ->setStatus($stDaIniziare)
-            ->setOrdine(3);
-        $tpl4 = (new ProjectTypeActionTemplate())
-            ->setProjectType($ptSviluppo)
-            ->setTitolo('Revisione UAT')
-            ->setDescrizione('Raccolta feedback cliente')
-            ->setStimaMin(180)
-            ->setActionType($tRevisione)
-            ->setStatus($stDaIniziare)
-            ->setOrdine(4);
-
-        // Template azioni: GRAFICA
-        $tplG1 = (new ProjectTypeActionTemplate())
-            ->setProjectType($ptGrafica)
-            ->setTitolo('Realizzazione preventivo')
-            ->setDescrizione(null)
-            ->setStimaMin(60)
-            ->setActionType($tRevisione)
-            ->setStatus($stDaIniziare)
-            ->setOrdine(1);
-        $tplG2 = (new ProjectTypeActionTemplate())
-            ->setProjectType($ptGrafica)
-            ->setTitolo('Definizione obiettivi')
-            ->setDescrizione(null)
-            ->setStimaMin(150) // 2h30m
-            ->setActionType($tRiunione)
-            ->setStatus($stDaIniziare)
-            ->setOrdine(2);
-        $tplG3 = (new ProjectTypeActionTemplate())
-            ->setProjectType($ptGrafica)
-            ->setTitolo('Bozza grafica')
-            ->setDescrizione(null)
-            ->setStimaMin(240)
-            ->setActionType($tSviluppo)
-            ->setStatus($stDaIniziare)
-            ->setOrdine(3);
-        $tplG4 = (new ProjectTypeActionTemplate())
-            ->setProjectType($ptGrafica)
-            ->setTitolo('Modifiche bozza')
-            ->setDescrizione(null)
-            ->setStimaMin(60)
-            ->setActionType($tRevisione)
-            ->setStatus($stDaIniziare)
-            ->setOrdine(4);
-        $tplG5 = (new ProjectTypeActionTemplate())
-            ->setProjectType($ptGrafica)
-            ->setTitolo('Grafica definitiva')
-            ->setDescrizione(null)
-            ->setStimaMin(120)
-            ->setActionType($tSviluppo)
-            ->setStatus($stDaIniziare)
-            ->setOrdine(5);
-
-        foreach ([$tpl1, $tpl2, $tpl3, $tpl4, $tplG1, $tplG2, $tplG3, $tplG4, $tplG5] as $tpl) {
-            $em->persist($tpl);
+        // --------------------------------
+        // 1) SETTINGS
+        // --------------------------------
+        $settings = [
+            ['chiave' => 'app.name', 'valore' => 'TempusFugit'],
+            ['chiave' => 'currency', 'valore' => 'EUR'],
+            ['chiave' => 'locale',   'valore' => 'it_IT'],
+        ];
+        foreach ($settings as $s) {
+            $st = new Setting();
+            $st->setChiave($s['chiave']);
+            $st->setValore($s['valore']);
+            $om->persist($st);
         }
 
-        // -----------------------------------------------------------------------------
-        // 5) USERS
-        // -----------------------------------------------------------------------------
-        $admin = (new User())
-            ->setEmail('admin@tempusfugit.local')
-            ->setRoles(['ROLE_ADMIN'])
-            ->setIsActive(true);
-        $admin->setPassword($this->hasher->hashPassword($admin, 'admin')); // cambia subito in prod
-        $em->persist($admin);
+        // --------------------------------
+        // 2) CLIENTI
+        // --------------------------------
+        $clients = [];
+        $clientData = [
+            ['Pippo S.r.l.', 'IT12345678901', 'PLPPLP80A01H501Z', 'pippo@example.com', '055-111111', 'Via Roma 1', '50100', 'Firenze'],
+            ['Paperone S.p.A.', 'IT23456789012', 'PPRPRN80A01H501Z', 'paperone@example.com', '02-222222', 'Via Milano 10', '20100', 'Milano'],
+            ['Topolinia SNC', 'IT34567890123', 'TPLTPL80A01H501Z', 'topo@example.com', '06-333333', 'Via Lazio 5', '00100', 'Roma'],
+            ['Minnie Design', 'IT45678901234', 'MNNMNN80A01H501Z', 'minnie@example.com', '041-444444', 'Calle Lunga 7', '30100', 'Venezia'],
+            ['QuiQuoQua', 'IT56789012345', 'QQQQQQ80A01H501Z', 'qqq@example.com', '011-555555', 'Corso Francia 99', '10100', 'Torino'],
+        ];
+        foreach ($clientData as [$den, $piva, $cf, $email, $tel, $via, $cap, $citta]) {
+            $c = new Client();
+            $c->setDenominazione($den);
+            $c->setPiva($piva);
+            $c->setCf($cf);
+            $c->setEmail($email);
+            $c->setTelefono($tel);
+            $c->setVia($via);
+            $c->setCap($cap);
+            $c->setCitta($citta);
+            $c->setNote(null);
+            if (method_exists($c, 'setCreatedAt')) { $c->setCreatedAt($now); }
+            if (method_exists($c, 'setUpdatedAt')) { $c->setUpdatedAt($now); }
+            $om->persist($c);
+            $clients[] = $c;
+        }
 
-        $clientUser = (new User())
-            ->setEmail('cliente@alfasrl.it')
-            ->setRoles(['ROLE_CLIENT'])
-            ->setCliente($cliA)
-            ->setIsActive(true);
-        $clientUser->setPassword($this->hasher->hashPassword($clientUser, 'client'));
-        $em->persist($clientUser);
+        // --------------------------------
+        // 3) USERS
+        // --------------------------------
+        $admin = new User();
+        $admin->setEmail('admin@tempusfugit.local');
+        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setIsActive(true);
+        $admin->setPassword($this->hasher->hashPassword($admin, 'admin'));
+        $admin->setCliente($clients[0] ?? null);
+        $om->persist($admin);
 
-        // -----------------------------------------------------------------------------
-        // 6) PROGETTI
-        // -----------------------------------------------------------------------------
-        $p1 = (new Project())
-            ->setClient($cliA)
-            ->setType($ptSviluppo)
-            ->setTitolo('Intranet gestionale')
-            ->setDescrizione('Portale interno per processi aziendali')
-            ->setTipologiaFatturazione('A_ORE')
-            ->setNote(null)
-            ->setDataInizio($now->sub(new DateInterval('P20D')))
-            ->setDataFineStimata($now->add(new DateInterval('P40D')))
-            ->setDataFineReale(null)
-            ->setStato('In corso')
-            ->setPathProgetto('/srv/projects/intranet-alfasrl')
-            ->setPercentAvanz(0.0)   // sarà aggiornato da logica applicativa
-            ->setImportoPreventivo('8500.00')
-            ->setCondizioniPagamento('30/60/90')
-            ->setCreatedAt($now)
-            ->setUpdatedAt($now);
-        $em->persist($p1);
+        $user = new User();
+        $user->setEmail('user@tempusfugit.local');
+        $user->setRoles(['ROLE_USER']);
+        $user->setIsActive(true);
+        $user->setPassword($this->hasher->hashPassword($user, 'user'));
+        $user->setCliente($clients[1] ?? null);
+        $om->persist($user);
 
-        $p2 = (new Project())
-            ->setClient($cliB)
-            ->setType($ptGrafica)
-            ->setTitolo('Branding & Kit social')
-            ->setDescrizione('Logo, palette, kit post social')
-            ->setTipologiaFatturazione('A_CORPO')
-            ->setDataInizio($now->sub(new DateInterval('P5D')))
-            ->setDataFineStimata($now->add(new DateInterval('P25D')))
-            ->setStato('In corso')
-            ->setPathProgetto('/srv/projects/branding-beta')
-            ->setPercentAvanz(0.0)
-            ->setImportoPreventivo('2400.00')
-            ->setCondizioniPagamento('30/60')
-            ->setCreatedAt($now)
-            ->setUpdatedAt($now);
-        $em->persist($p2);
+        // --------------------------------
+        // 4) TIPOLOGIE PROGETTO
+        // --------------------------------
+        $ptSoftware = new ProjectType();
+        $ptSoftware->setDescrizione('Sviluppo software');
+        // decimali in DB: 10.00 — se memorizzi centesimi come int, metti 1000
+        $ptSoftware->setCostoOrarioDefault(10.00);
+        if (method_exists($ptSoftware, 'setVersion')) { $ptSoftware->setVersion(1); }
+        $om->persist($ptSoftware);
 
-        // -----------------------------------------------------------------------------
-        // 7) AZIONI (per p1 creiamo qualche azione già presente)
-        // -----------------------------------------------------------------------------
-        $a1 = (new Action())
-            ->setProject($p1)
-            ->setTitolo('Analisi requisiti')
-            ->setDescrizione('Workshop iniziale con reparti')
-            ->setStimaMin(120)
-            ->setDeadline($now->add(new DateInterval('P3D')))
-            ->setType($tRiunione)
-            ->setStatus($stInCorso)
-            ->setFatturabile(false)
-            ->setCreatedAt($now)
-            ->setUpdatedAt($now);
-        $em->persist($a1);
+        $ptConsulenza = new ProjectType();
+        $ptConsulenza->setDescrizione('Consulenza');
+        $ptConsulenza->setCostoOrarioDefault(12.50);
+        if (method_exists($ptConsulenza, 'setVersion')) { $ptConsulenza->setVersion(1); }
+        $om->persist($ptConsulenza);
 
-        $a2 = (new Action())
-            ->setProject($p1)
-            ->setTitolo('Setup progetto')
-            ->setDescrizione('Repo + CI + impalcatura Symfony')
-            ->setStimaMin(180)
-            ->setDeadline($now->add(new DateInterval('P5D')))
-            ->setType($tSviluppo)
-            ->setStatus($stDaIniziare)
-            ->setFatturabile(true)
-            ->setCreatedAt($now)
-            ->setUpdatedAt($now);
-        $em->persist($a2);
+        $ptGrafica = new ProjectType();
+        $ptGrafica->setDescrizione('Grafica');
+        $ptGrafica->setCostoOrarioDefault(9.00);
+        if (method_exists($ptGrafica, 'setVersion')) { $ptGrafica->setVersion(1); }
+        $om->persist($ptGrafica);
 
-        $a3 = (new Action())
-            ->setProject($p1)
-            ->setTitolo('Sviluppo MVP')
-            ->setDescrizione('Auth, CRUD principali, report base')
-            ->setStimaMin(900)
-            ->setDeadline($now->add(new DateInterval('P25D')))
-            ->setType($tSviluppo)
-            ->setStatus($stDaIniziare)
-            ->setFatturabile(true)
-            ->setCreatedAt($now)
-            ->setUpdatedAt($now);
-        $em->persist($a3);
+        // --------------------------------
+        // 5) STATI AZIONE
+        // --------------------------------
+        $stDaIniziare = (new ActionStatus())->setDescrizione('Da iniziare')->setChiusura(false)->setOrdine(10);
+        $stApprovato  = (new ActionStatus())->setDescrizione('Approvato')->setChiusura(false)->setOrdine(15);
+        $stInCorso    = (new ActionStatus())->setDescrizione('In corso')->setChiusura(false)->setOrdine(20);
+        $stSospeso    = (new ActionStatus())->setDescrizione('Sospeso')->setChiusura(false)->setOrdine(40);
+        $stCompletato = (new ActionStatus())->setDescrizione('Completato')->setChiusura(true)->setOrdine(90);
+        foreach ([$stDaIniziare,$stApprovato,$stInCorso,$stSospeso,$stCompletato] as $s) {
+            $om->persist($s);
+        }
 
-        // -----------------------------------------------------------------------------
-        // 8) TEMPI (timer/registrazioni)
-        // -----------------------------------------------------------------------------
-        // Tempo su a1 (in corso + uno chiuso)
-        $t1 = (new TimeEntry())
-            ->setProject($p1)
-            ->setProjectAction($a1) // << property NON "action"
-            ->setStartAt($now->sub(new DateInterval('PT2H')))
-            ->setEndAt($now->sub(new DateInterval('PT1H30M')))
-            ->setDurataMin(30)
-            ->setDescrizione('Kickoff call con reparto vendite')
-            ->setBillable(false);
-        $em->persist($t1);
+        // --------------------------------
+        // 6) TIPI AZIONE
+        // --------------------------------
+        $tAnalisi   = (new ActionType())->setDescrizione('Analisi')->setFatturabileDefault(true);
+        $tSviluppo  = (new ActionType())->setDescrizione('Sviluppo')->setFatturabileDefault(true);
+        $tRiunione  = (new ActionType())->setDescrizione('Riunione')->setFatturabileDefault(false);
+        $tRevisione = (new ActionType())->setDescrizione('Revisione')->setFatturabileDefault(true);
+        foreach ([$tAnalisi,$tSviluppo,$tRiunione,$tRevisione] as $t) { $om->persist($t); }
 
-        // Timer ancora aperto su a1 (endAt null)
-        $t2 = (new TimeEntry())
-            ->setProject($p1)
-            ->setProjectAction($a1)
-            ->setStartAt($now->sub(new DateInterval('PT20M')))
-            ->setEndAt(null)
-            ->setDurataMin(0) // sarà calcolato alla chiusura
-            ->setDescrizione('Allineamento requisiti marketing')
-            ->setBillable(false);
-        $em->persist($t2);
+        $om->flush(); // assicura ID per FK
 
-        // Tempo su a2
-        $t3 = (new TimeEntry())
-            ->setProject($p1)
-            ->setProjectAction($a2)
-            ->setStartAt($now->sub(new DateInterval('P1DT3H')))
-            ->setEndAt($now->sub(new DateInterval('P1DT2H')))
-            ->setDurataMin(60)
-            ->setDescrizione('Impostazione CI + linting')
-            ->setBillable(true);
-        $em->persist($t3);
+        // --------------------------------
+        // 7) PROGETTI
+        // --------------------------------
+        $projects = [];
+        $progettiSeed = [
+            ['Gestionale magazzino', $ptSoftware, $clients[0], 'A_ORE', 3200.00, '30/60', 10],
+            ['Sito vetrina',         $ptGrafica,  $clients[1], 'A_CORPO', 1500.00, '30',   20],
+            ['Refactoring API',      $ptSoftware, $clients[2], 'A_ORE', 2400.00, '30/60/90', 5],
+            ['Formazione team',      $ptConsulenza,$clients[3],'A_ORE',  900.00, '60',   15],
+        ];
+        foreach ($progettiSeed as [$titolo, $tipo, $cliente, $fatt, $preventivo, $pag, $giorni]) {
+            $p = new Project();
+            $p->setClient($cliente);
+            $p->setType($tipo);
+            $p->setTitolo($titolo);
+            $p->setDescrizione(null);
+            $p->setTipologiaFatturazione($fatt);
+            $p->setImportoPreventivo($preventivo);
+            $p->setCondizioniPagamento($pag);
+            $p->setDataInizio($now->modify('-'.$giorni.' days'));
+            $p->setDataFineStimata($now->modify('+'.($giorni+14).' days'));
+            $p->setDataFineReale(null);
+            // Stato del PROGETTO come relazione a ActionStatus (es. In corso)
+            if (method_exists($p, 'setStato')) { $p->setStato($stInCorso); }
+            $p->setPathProgetto(null);
+            $p->setPercentAvanz(0); // sarà ricalcolato dal tuo subscriber quando crei azioni
+            $p->setNote(null);
+            if (method_exists($p, 'setCreatedAt')) { $p->setCreatedAt($now); }
+            if (method_exists($p, 'setUpdatedAt')) { $p->setUpdatedAt($now); }
+            $om->persist($p);
+            $projects[] = $p;
+        }
+        $om->flush();
 
-        // -----------------------------------------------------------------------------
-        // 9) MOVIMENTI (prima nota)
-        // -----------------------------------------------------------------------------
-        // Debito preventivo creato all’apertura progetto (simuliamo quello che l’event-subscriber farà)
-        $mov1 = (new LedgerMovement())
-            ->setProject($p1)
-            ->setData($now->sub(new DateInterval('P20D')))
-            ->setTipo('DEBITO')
-            ->setCategoria('preventivo')
-            ->setImporto('8500.00')
-            ->setDescrizione('Preventivo progetto Intranet')
-            ->setNota(null)
-            ->setIvaPercent('22.00')
-            ->setPagato(false);
-        $em->persist($mov1);
+        // --------------------------------
+        // 8) AZIONI per progetto
+        // --------------------------------
+        $rand = static fn(int $min, int $max) => mt_rand($min,$max);
+        foreach ($projects as $p) {
+            $bundle = [
+                ['Analisi requisiti',  $tAnalisi,   180,  '+3 days',  $stInCorso,    true],
+                ['Kickoff con cliente',$tRiunione,   60,  '+1 day',   $stCompletato, false],
+                ['Sviluppo Feature A', $tSviluppo,  420,  '+10 days', $stInCorso,    true],
+                ['Revisione UX',       $tRevisione, 180,  '+7 days',  $stDaIniziare, true],
+            ];
+            if ($rand(0,1)) {
+                $bundle[] = ['Sviluppo Feature B', $tSviluppo, 360, '+20 days', $stDaIniziare, true];
+            }
 
-        // Spesa hosting
-        $mov2 = (new LedgerMovement())
-            ->setProject($p1)
-            ->setData($now->sub(new DateInterval('P10D')))
-            ->setTipo('DEBITO')
-            ->setCategoria('hosting')
-            ->setImporto('120.00')
-            ->setDescrizione('Server staging 1 mese')
-            ->setIvaPercent('22.00')
-            ->setPagato(true);
-        $em->persist($mov2);
+            foreach ($bundle as [$titolo,$tipo,$stima,$deadlineMod,$stato,$fatt]) {
+                $a = new Action();
+                $a->setProject($p);
+                $a->setType($tipo);
+                $a->setStatus($stato);
+                $a->setTitolo($titolo);
+                $a->setDescrizione(null);
+                $a->setStimaMin($stima);
+                $a->setDeadline($now->modify($deadlineMod));
+                $a->setFatturabile($fatt);
+                if (method_exists($a, 'setCreatedAt')) { $a->setCreatedAt($now); }
+                if (method_exists($a, 'setUpdatedAt')) { $a->setUpdatedAt($now); }
+                $om->persist($a);
+            }
+        }
+        $om->flush();
 
-        // Incasso acconto
-        $mov3 = (new LedgerMovement())
-            ->setProject($p1)
-            ->setData($now->sub(new DateInterval('P7D')))
-            ->setTipo('CREDITO')
-            ->setCategoria('acconto')
-            ->setImporto('3000.00')
-            ->setDescrizione('Acconto da Alfa S.r.l.')
-            ->setIvaPercent('22.00')
-            ->setPagato(true);
-        $em->persist($mov3);
+        // --------------------------------
+        // 9) TIME ENTRIES (per alcune azioni)
+        // --------------------------------
+        $actions = $om->getRepository(Action::class)->findAll();
+        foreach ($actions as $a) {
+            // 2-4 time logs per azione
+            $logs = $rand(2,4);
+            for ($i=0; $i<$logs; $i++) {
+                $start = $now->modify('-'.($rand(1,15)).' days')->setTime($rand(8,10), [0,15,30,45][$rand(0,3)]);
+                $end   = $start->modify('+'.($rand(30,180)).' minutes');
 
-        // -----------------------------------------------------------------------------
-        // 10) COMUNICAZIONI
-        // -----------------------------------------------------------------------------
-        $c1 = (new Communication())
-            ->setProject($p1)
-            ->setClient($cliA)
-            ->setData($now->sub(new DateInterval('P2D')))
-            ->setComunicazione('Conferma analisi requisiti e richiesta dashboard KPI');
-        $em->persist($c1);
+                $t = new TimeEntry();
+                $t->setProject($a->getProject());
+                // ATTENZIONE: cambia 'projectAction' in 'action' se la tua proprietà si chiama così
+                if (method_exists($t, 'setProjectAction')) {
+                    $t->setProjectAction($a);
+                } elseif (method_exists($t, 'setAction')) {
+                    $t->setProjectAction($a);
+                }
+                $t->setStartAt($start);
+                $t->setEndAt($end);
+                $t->setBillable($a->isFatturabile() ?? true);
+                $t->setDescrizione(null);
+                // durataMin verrà calcolata dai lifecycle della entity TimeEntry
+                $om->persist($t);
+            }
+        }
+        $om->flush();
 
-        $c2 = (new Communication())
-            ->setProject($p2)
-            ->setClient($cliB)
-            ->setData($now->sub(new DateInterval('P1D')))
-            ->setComunicazione('Invio prima bozza logo e palette');
-        $em->persist($c2);
+        // --------------------------------
+        // 10) MOVIMENTI (incassi/spese) per progetto
+        // --------------------------------
+        foreach ($projects as $p) {
+            // spesa
+            $m1 = new LedgerMovement();
+            $m1->setProject($p);
+            $m1->setData($now->modify('-10 days'));
+            $m1->setTipo('DEBITO');
+            $m1->setImporto( $rand(50, 300) );
+            $m1->setDescrizione('Acquisto materiali');
+            $om->persist($m1);
 
-        // -----------------------------------------------------------------------------
-        // 11) SETTINGS
-        // -----------------------------------------------------------------------------
-        $s1 = (new Setting())
-            ->setChiave('rounding.minutes')
-            ->setValore('15'); // arrotondamento registrazioni tempo a 15 minuti
-        $s2 = (new Setting())
-            ->setChiave('billing.currency')
-            ->setValore('EUR');
-        $s3 = (new Setting())
-            ->setChiave('projects.base_path')
-            ->setValore('/srv/projects');
+            // incasso parziale
+            $m2 = new LedgerMovement();
+            $m2->setProject($p);
+            $m2->setData($now->modify('-3 days'));
+            $m2->setTipo('CREDITO');
+            $m2->setImporto( $rand(200, 800) );
+            $m2->setDescrizione('Acconto cliente');
+            $om->persist($m2);
+        }
+        $om->flush();
 
-        $em->persist($s1);
-        $em->persist($s2);
-        $em->persist($s3);
-
-        // -----------------------------------------------------------------------------
-        // FLUSH
-        // -----------------------------------------------------------------------------
-        $em->flush();
+        // --------------------------------
+        // 11) COMUNICAZIONI
+        // --------------------------------
+        foreach ($projects as $p) {
+            $comm = new Communication();
+            $comm->setProject($p);
+            $comm->setClient($p->getClient());
+            $comm->setData($now->modify('-2 days')->setTime(15, 30));
+            $comm->setTipologia('email'); // chiamata | whatsapp | email | sms | altro
+            $comm->setComunicazione('Aggiornamento stato progetto e pianificazione prossime attività.');
+            $om->persist($comm);
+        }
+        $om->flush();
     }
 }

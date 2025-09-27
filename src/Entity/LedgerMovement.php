@@ -25,23 +25,11 @@ class LedgerMovement
     #[ORM\Column(length: 255)]
     private ?string $tipo = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $categoria = null;
-
     #[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 2)]
     private ?string $importo = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $descrizione = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $nota = null;
-
-    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2)]
-    private ?string $ivaPercent = null;
-
-    #[ORM\Column]
-    private ?bool $pagato = null;
 
     public function __construct()
     {
@@ -86,18 +74,6 @@ class LedgerMovement
         return $this;
     }
 
-    public function getCategoria(): ?string
-    {
-        return $this->categoria;
-    }
-
-    public function setCategoria(string $categoria): static
-    {
-        $this->categoria = $categoria;
-
-        return $this;
-    }
-
     public function getImporto(): ?string
     {
         return $this->importo;
@@ -118,42 +94,6 @@ class LedgerMovement
     public function setDescrizione(?string $descrizione): static
     {
         $this->descrizione = $descrizione;
-
-        return $this;
-    }
-
-    public function getNota(): ?string
-    {
-        return $this->nota;
-    }
-
-    public function setNota(?string $nota): static
-    {
-        $this->nota = $nota;
-
-        return $this;
-    }
-
-    public function getIvaPercent(): ?string
-    {
-        return $this->ivaPercent;
-    }
-
-    public function setIvaPercent(string $ivaPercent): static
-    {
-        $this->ivaPercent = $ivaPercent;
-
-        return $this;
-    }
-
-    public function isPagato(): ?bool
-    {
-        return $this->pagato;
-    }
-
-    public function setPagato(bool $pagato): static
-    {
-        $this->pagato = $pagato;
 
         return $this;
     }

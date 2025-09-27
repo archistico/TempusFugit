@@ -31,12 +31,8 @@ class LedgerMovementCrudController extends AbstractCrudController
             AssociationField::new('project')->autocomplete(),
             DateField::new('data'),
             ChoiceField::new('tipo')->setChoices(['DEBITO' => 'DEBITO', 'CREDITO' => 'CREDITO']),
-            TextField::new('categoria'),
             MoneyField::new('importo')->setCurrency('EUR'),
             TextareaField::new('descrizione')->hideOnIndex(),
-            TextareaField::new('nota')->hideOnIndex(),
-            TextField::new('ivaPercent')->hideOnIndex()->setLabel('IVA %'),
-            BooleanField::new('pagato')->renderAsSwitch(false),
         ];
     }
 }
