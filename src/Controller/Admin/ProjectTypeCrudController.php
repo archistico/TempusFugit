@@ -24,6 +24,21 @@ class ProjectTypeCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        // Valori di default
+        if ($pageName === Crud::PAGE_NEW) {
+            $money = MoneyField::new('costoOrarioDefault', 'Costo orario default')
+                ->setCurrency('EUR')
+                ->setFormTypeOptions(['data' => 1000.00]);
+        
+            $version = IntegerField::new('version')->setFormTypeOptions(['data' => 1]);
+        
+            return [
+                TextField::new('descrizione'),
+                $money,
+                $version->hideOnIndex(),
+            ];
+        }
+
         return [
             TextField::new('descrizione')->setLabel('Descrizione'),
             // se salvi in EUR; altrimenti usa NumberField

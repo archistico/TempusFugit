@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250927154114 extends AbstractMigration
+final class Version20250927181458 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -33,7 +33,7 @@ final class Version20250927154114 extends AbstractMigration
         , updated_at DATETIME DEFAULT NULL --(DC2Type:datetime_immutable)
         , PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE communication (id VARCHAR(36) NOT NULL, project_id VARCHAR(36) NOT NULL, client_id VARCHAR(36) NOT NULL, data DATE NOT NULL --(DC2Type:date_immutable)
-        , comunicazione VARCHAR(255) NOT NULL, PRIMARY KEY(id), CONSTRAINT FK_F9AFB5EB166D1F9C FOREIGN KEY (project_id) REFERENCES project (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_F9AFB5EB19EB6921 FOREIGN KEY (client_id) REFERENCES client (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        , comunicazione VARCHAR(255) NOT NULL, tipologia VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id), CONSTRAINT FK_F9AFB5EB166D1F9C FOREIGN KEY (project_id) REFERENCES project (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_F9AFB5EB19EB6921 FOREIGN KEY (client_id) REFERENCES client (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_F9AFB5EB166D1F9C ON communication (project_id)');
         $this->addSql('CREATE INDEX IDX_F9AFB5EB19EB6921 ON communication (client_id)');
         $this->addSql('CREATE TABLE ledger_movement (id VARCHAR(36) NOT NULL, project_id VARCHAR(36) NOT NULL, data DATE DEFAULT NULL --(DC2Type:date_immutable)

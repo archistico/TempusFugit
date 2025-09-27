@@ -7,8 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TimeEntryRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class TimeEntry
 {
     #[ORM\Id]
@@ -23,13 +25,17 @@ class TimeEntry
     #[ORM\JoinColumn(nullable: false)]
     private ?Action $projectAction = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime_immutable')]
     private ?\DateTimeImmutable $startAt = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[Assert\Expression(
+        "this.getEndAt() === null or this.getEndAt() >= this.getStartAt()",
+        message: "La fine deve essere successiva all'inizio."
+    )]
     private ?\DateTimeImmutable $endAt = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $durataMin = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -77,7 +83,7 @@ class TimeEntry
     public function setStartAt(\DateTimeImmutable $startAt): static
     {
         $this->startAt = $startAt;
-
+        $this->recalcDuration();
         return $this;
     }
 
@@ -89,7 +95,7 @@ class TimeEntry
     public function setEndAt(?\DateTimeImmutable $endAt): static
     {
         $this->endAt = $endAt;
-
+        $this->recalcDuration();
         return $this;
     }
 
@@ -127,5 +133,22 @@ class TimeEntry
         $this->billable = $billable;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function recalcDuration(): void
+    {
+        if (!$this->startAt || !$this->endAt) {
+            $this->durataMin = 0;
+            return;
+        }
+        // se end < start, forza a 0 (oppure lancia validazione)
+        if ($this->endAt < $this->startAt) {
+            $this->durataMin = 0;
+            return;
+        }
+        $diff = $this->endAt->getTimestamp() - $this->startAt->getTimestamp();
+        $this->durataMin = (int) floor($diff / 60);
     }
 }
