@@ -8,6 +8,12 @@ doctrine:
 
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+
+        schema_filter: ~
+        options:
+            3: true # SQLITE3_ATTR_OPEN_FLAGS se servisse
+                    # attiva FK e WAL all’avvio
+                    # usa "doctrine.dbal.events" se vuoi farlo a runtime
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
