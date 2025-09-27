@@ -55,9 +55,16 @@ class Client
     #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'client')]
     private Collection $projects;
 
+    /**
+     * @var Collection<int, Communication>
+     */
+    #[ORM\OneToMany(targetEntity: Communication::class, mappedBy: 'client')]
+    private Collection $communications;
+
     public function __construct()
     {
         $this->projects = new ArrayCollection();
+        $this->communications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -228,6 +235,36 @@ class Client
             // set the owning side to null (unless already changed)
             if ($project->getClient() === $this) {
                 $project->setClient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Communication>
+     */
+    public function getCommunications(): Collection
+    {
+        return $this->communications;
+    }
+
+    public function addCommunication(Communication $communication): static
+    {
+        if (!$this->communications->contains($communication)) {
+            $this->communications->add($communication);
+            $communication->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommunication(Communication $communication): static
+    {
+        if ($this->communications->removeElement($communication)) {
+            // set the owning side to null (unless already changed)
+            if ($communication->getClient() === $this) {
+                $communication->setClient(null);
             }
         }
 

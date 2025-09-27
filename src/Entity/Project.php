@@ -85,11 +85,18 @@ class Project
     #[ORM\OneToMany(targetEntity: LedgerMovement::class, mappedBy: 'project')]
     private Collection $ledgerMovements;
 
+    /**
+     * @var Collection<int, Communication>
+     */
+    #[ORM\OneToMany(targetEntity: Communication::class, mappedBy: 'project')]
+    private Collection $communications;
+
     public function __construct()
     {
         $this->actions = new ArrayCollection();
         $this->timeEntries = new ArrayCollection();
         $this->ledgerMovements = new ArrayCollection();
+        $this->communications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -380,6 +387,36 @@ class Project
             // set the owning side to null (unless already changed)
             if ($ledgerMovement->getProject() === $this) {
                 $ledgerMovement->setProject(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Communication>
+     */
+    public function getCommunications(): Collection
+    {
+        return $this->communications;
+    }
+
+    public function addCommunication(Communication $communication): static
+    {
+        if (!$this->communications->contains($communication)) {
+            $this->communications->add($communication);
+            $communication->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommunication(Communication $communication): static
+    {
+        if ($this->communications->removeElement($communication)) {
+            // set the owning side to null (unless already changed)
+            if ($communication->getProject() === $this) {
+                $communication->setProject(null);
             }
         }
 
