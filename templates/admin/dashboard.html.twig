@@ -1,0 +1,217 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content %}
+<style>
+  :root{
+    --bg:#fafafa;
+    --card:#ffffff;
+    --text:#111827;
+    --muted:#6b7280;
+    --border:#e5e7eb;
+    --accent:#2563eb;
+    --accent-weak:#eff6ff;
+    --success:#16a34a;
+    --warn:#d97706;
+    --danger:#dc2626;
+    --radius:14px;
+    --shadow:0 1px 2px rgb(0 0 0 / .06), 0 8px 24px rgb(0 0 0 / .05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b0f14;
+      --card:#0f141a;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --border:#1f2937;
+      --accent:#3b82f6;
+      --accent-weak:#0b1a33;
+      --shadow:none;
+    }
+  }
+
+  .layout{display:grid;gap:18px}
+  .kpis{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+  .kpi{grid-column:span 3;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+  .kpi .label{color:var(--muted);font-size:.85rem;margin-bottom:6px}
+  .kpi .value{font-size:1.6rem;font-weight:600;color:var(--text);letter-spacing:.2px}
+  .kpi.--accent{background:var(--accent-weak);border-color:transparent}
+  .kpi.--accent .value{color:var(--accent)}
+
+  @media (max-width:1100px){ .kpi{grid-column:span 6} }
+  @media (max-width:640px){ .kpi{grid-column:span 12} }
+
+  .cards{display:grid;grid-template-columns:2fr 2fr 2fr;gap:18px}
+  @media (max-width:1200px){ .cards{grid-template-columns:1fr 1fr} }
+  @media (max-width:800px){ .cards{grid-template-columns:1fr} }
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .card header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+  .card h3{font-size:1rem;margin:0;color:var(--text)}
+  .card .body{padding:6px 0}
+
+  .table{width:100%;border-collapse:separate;border-spacing:0}
+  .table th,.table td{padding:10px 14px;text-align:left;white-space:nowrap}
+  .table thead th{font-size:.82rem;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border)}
+  .table tbody tr{border-bottom:1px solid var(--border)}
+  .table tbody tr:hover{background:color-mix(in srgb, var(--accent) 6%, transparent)}
+  .table td:last-child,.table th:last-child{text-align:right}
+  .ellipsis{max-width:360px;overflow:hidden;text-overflow:ellipsis}
+  .sub{color:var(--muted);font-size:.86rem}
+
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;font-size:.78rem;border:1px solid var(--border);color:var(--text)}
+  .chip.--ok{background:color-mix(in srgb, var(--success) 10%, transparent);border-color:color-mix(in srgb, var(--success) 30%, var(--border));}
+  .chip.--warn{background:color-mix(in srgb, var(--warn) 10%, transparent);border-color:color-mix(in srgb, var(--warn) 30%, var(--border));}
+  .chip.--muted{background:transparent}
+
+  .muted{color:var(--muted)}
+  .pad{padding:8px 16px}
+  .spacer{height:6px}
+</style>
+
+<div class="layout">
+
+  <!-- KPI -->
+  <section class="kpis">
+    <div class="kpi">
+      <div class="label">Ore oggi</div>
+      <div class="value">{{ (minsToday/60)|number_format(2, ',', '.') }} h</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Ore settimana</div>
+      <div class="value">{{ (minsWeek/60)|number_format(2, ',', '.') }} h</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Ore mese</div>
+      <div class="value">{{ (minsMonth/60)|number_format(2, ',', '.') }} h</div>
+    </div>
+    <div class="kpi --accent">
+      <div class="label">Efficienza mese</div>
+      <div class="value">{{ efficiencyPct }}%</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Entrate mese</div>
+      <div class="value">€ {{ entrateMonth|number_format(2, ',', '.') }}</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Spese mese</div>
+      <div class="value">€ {{ speseMonth|number_format(2, ',', '.') }}</div>
+    </div>
+  </section>
+
+  <!-- LISTE -->
+  <section class="cards">
+
+    <article class="card">
+      <header>
+        <h3>Progetti aperti (prossime scadenze)</h3>
+        <a class="sub" href="{{ ea_url().setController('App\\Controller\\Admin\\ProjectCrudController') }}">vedi tutti</a>
+      </header>
+      <div class="body">
+        <table class="table">
+          <thead>
+            <tr><th>Cliente</th><th class="ellipsis">Titolo</th><th>Fine stim.</th><th>%</th></tr>
+          </thead>
+          <tbody>
+          {% for p in projects %}
+            <tr>
+              <td class="ellipsis">{{ p.client ?? '' }}</td>
+              <td class="ellipsis">
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\ProjectCrudController').setAction('detail').setEntityId(p.id) }}">{{ p.titolo }}</a>
+                {% if p.stato %}
+                  <div class="sub">{{ p.stato }}</div>
+                {% endif %}
+              </td>
+              <td>{{ p.dataFineStimata ? p.dataFineStimata|date('d/m/Y') : '-' }}</td>
+              <td>{{ p.percentAvanz ?? 0 }}%</td>
+            </tr>
+          {% else %}
+            <tr><td colspan="4" class="pad muted">Nessun progetto aperto</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="card">
+      <header>
+        <h3>Azioni non concluse</h3>
+        <a class="sub" href="{{ ea_url().setController('App\\Controller\\Admin\\ActionCrudController') }}">vedi tutte</a>
+      </header>
+      <div class="body">
+        <table class="table">
+          <thead>
+            <tr><th>Progetto</th><th class="ellipsis">Azione</th><th>Scadenza</th><th>Stato</th></tr>
+          </thead>
+          <tbody>
+          {% for a in actions %}
+            {% set chipClass = a.status and a.status.chiusura ? '--ok' : (a.deadline and a.deadline < 'now'|date ? '--warn' : '--muted') %}
+            <tr>
+              <td class="ellipsis">{{ a.project ?? '' }}</td>
+              <td class="ellipsis">
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\ActionCrudController').setAction('detail').setEntityId(a.id) }}">{{ a.titolo }}</a>
+                {% if a.type %}<div class="sub">{{ a.type.descrizione }}</div>{% endif %}
+              </td>
+              <td>{{ a.deadline ? a.deadline|date('d/m/Y H:i') : '-' }}</td>
+              <td><span class="chip {{ chipClass }}">{{ a.status ? a.status.descrizione : '—' }}</span></td>
+            </tr>
+          {% else %}
+            <tr><td colspan="4" class="pad muted">Nessuna azione pendente</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="card">
+      <header>
+        <h3>Ultimi tempi & movimenti</h3>
+        <div class="sub">
+          <a href="{{ ea_url().setController('App\\Controller\\Admin\\TimeEntryCrudController') }}">tempi</a> ·
+          <a href="{{ ea_url().setController('App\\Controller\\Admin\\LedgerMovementCrudController') }}">movimenti</a>
+        </div>
+      </header>
+      <div class="body pad">
+        <div class="sub" style="margin-bottom:6px">Tempi recenti</div>
+        <table class="table">
+          <thead><tr><th>Progetto</th><th>Azione</th><th>Inizio</th><th>Durata</th></tr></thead>
+          <tbody>
+          {% for t in timeEntries %}
+            {% set h = (t.durataMin//60) %}
+            {% set m = (t.durataMin%60) %}
+            <tr>
+              <td class="ellipsis">{{ t.project ?? '' }}</td>
+              <td class="ellipsis">{{ t.projectAction ?? '' }}</td>
+              <td>{{ t.startAt|date('d/m/Y H:i') }}</td>
+              <td>{{ '%02d:%02d'|format(h, m) }}</td>
+            </tr>
+          {% else %}
+            <tr><td colspan="4" class="pad muted">Nessun tempo recente</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="spacer"></div>
+        <div class="sub" style="margin:8px 0 6px">Movimenti recenti</div>
+        <table class="table">
+          <thead><tr><th>Data</th><th>Tipo</th><th>Progetto</th><th>Importo</th></tr></thead>
+          <tbody>
+          {% for m in movements %}
+            <tr>
+              <td>{{ m.data|date('d/m/Y') }}</td>
+              <td>
+                <span class="chip {{ m.tipo == 'CREDITO' ? '--ok' : '--warn' }}">{{ m.tipo }}</span>
+              </td>
+              <td class="ellipsis">{{ m.project ?? '' }}</td>
+              <td>€ {{ m.importo|number_format(2, ',', '.') }}</td>
+            </tr>
+          {% else %}
+            <tr><td colspan="4" class="pad muted">Nessun movimento recente</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+  </section>
+</div>
+{% endblock %}
