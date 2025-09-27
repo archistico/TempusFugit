@@ -64,7 +64,12 @@ class Action
         $this->timeEntries = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function __toString(): string
+    {
+        return $this->getTitolo() ?? '';
+    }
+
+    public function getId(): ?Uuid
     {
         return $this->id;
     }

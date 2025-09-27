@@ -45,6 +45,11 @@ class ActionStatus
         $this->projectTypeActionTemplates = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->getDescrizione() ?? '';
+    }
+
     public function getId(): ?Uuid { return $this->id; }
 
     public function setId(Uuid $id): static

@@ -46,7 +46,12 @@ class ProjectType
         $this->projectTypeActionTemplates = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function __toString(): string
+    {
+        return $this->getDescrizione() ?? '';
+    }
+
+    public function getId(): ?Uuid
     {
         return $this->id;
     }

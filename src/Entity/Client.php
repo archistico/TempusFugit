@@ -76,7 +76,12 @@ class Client
         $this->users = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function __toString(): string
+    {
+        return $this->getDenominazione() ?: 'Cliente #'.$this->getId();
+    }
+
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
@@ -309,4 +314,5 @@ class Client
 
         return $this;
     }
+
 }
