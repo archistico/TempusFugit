@@ -79,10 +79,17 @@ class Project
     #[ORM\OneToMany(targetEntity: TimeEntry::class, mappedBy: 'project')]
     private Collection $timeEntries;
 
+    /**
+     * @var Collection<int, LedgerMovement>
+     */
+    #[ORM\OneToMany(targetEntity: LedgerMovement::class, mappedBy: 'project')]
+    private Collection $ledgerMovements;
+
     public function __construct()
     {
         $this->actions = new ArrayCollection();
         $this->timeEntries = new ArrayCollection();
+        $this->ledgerMovements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -343,6 +350,36 @@ class Project
             // set the owning side to null (unless already changed)
             if ($timeEntry->getProject() === $this) {
                 $timeEntry->setProject(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LedgerMovement>
+     */
+    public function getLedgerMovements(): Collection
+    {
+        return $this->ledgerMovements;
+    }
+
+    public function addLedgerMovement(LedgerMovement $ledgerMovement): static
+    {
+        if (!$this->ledgerMovements->contains($ledgerMovement)) {
+            $this->ledgerMovements->add($ledgerMovement);
+            $ledgerMovement->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLedgerMovement(LedgerMovement $ledgerMovement): static
+    {
+        if ($this->ledgerMovements->removeElement($ledgerMovement)) {
+            // set the owning side to null (unless already changed)
+            if ($ledgerMovement->getProject() === $this) {
+                $ledgerMovement->setProject(null);
             }
         }
 
