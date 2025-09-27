@@ -7,14 +7,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
+	private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $denominazione = null;
@@ -61,10 +62,18 @@ class Client
     #[ORM\OneToMany(targetEntity: Communication::class, mappedBy: 'client')]
     private Collection $communications;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'cliente')]
+    private Collection $users;
+
     public function __construct()
     {
+        $this->id = Uuid::v7(); 
         $this->projects = new ArrayCollection();
         $this->communications = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -265,6 +274,36 @@ class Client
             // set the owning side to null (unless already changed)
             if ($communication->getClient() === $this) {
                 $communication->setClient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->setCliente($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getCliente() === $this) {
+                $user->setCliente(null);
             }
         }
 

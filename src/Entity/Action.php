@@ -7,15 +7,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: ActionRepository::class)]
 #[ORM\Table(name: '`action`')]
 class Action
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
+    private ?Uuid $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'actions')]
     #[ORM\JoinColumn(nullable: false)]
@@ -30,8 +32,8 @@ class Action
     #[ORM\Column]
     private ?int $stimaMin = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $deadline = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $deadline = null;
 
     #[ORM\ManyToOne(inversedBy: 'actions')]
     #[ORM\JoinColumn(nullable: false)]
@@ -58,6 +60,7 @@ class Action
 
     public function __construct()
     {
+        $this->id = Uuid::v7(); // <— genera qui
         $this->timeEntries = new ArrayCollection();
     }
 
@@ -121,12 +124,12 @@ class Action
         return $this;
     }
 
-    public function getDeadline(): ?\DateTime
+    public function getDeadline(): ?\DateTimeImmutable
     {
         return $this->deadline;
     }
 
-    public function setDeadline(?\DateTime $deadline): static
+    public function setDeadline(?\DateTimeImmutable $deadline): static
     {
         $this->deadline = $deadline;
 

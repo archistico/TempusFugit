@@ -5,14 +5,16 @@ namespace App\Entity;
 use App\Repository\CommunicationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: CommunicationRepository::class)]
 class Communication
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
+	private ?Uuid $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'communications')]
     #[ORM\JoinColumn(nullable: false)]
@@ -22,11 +24,16 @@ class Communication
     #[ORM\JoinColumn(nullable: false)]
     private ?Client $client = null;
 
-    #[ORM\Column]
-    private ?\DateTime $data = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private ?\DateTimeImmutable $data = null;
 
     #[ORM\Column(length: 255)]
     private ?string $comunicazione = null;
+
+    public function __construct()
+    {
+        $this->id = Uuid::v7(); 
+    }
 
     public function getId(): ?int
     {
@@ -64,12 +71,12 @@ class Communication
         return $this;
     }
 
-    public function getData(): ?\DateTime
+    public function getData(): ?\DateTimeImmutable
     {
         return $this->data;
     }
 
-    public function setData(\DateTime $data): static
+    public function setData(\DateTimeImmutable $data): static
     {
         $this->data = $data;
 

@@ -8,14 +8,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 
 #[ORM\Entity(repositoryClass: ProjectTypeRepository::class)]
 class ProjectType
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
+	private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $descrizione = null;
@@ -32,9 +33,17 @@ class ProjectType
     #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'type')]
     private Collection $projects;
 
+    /**
+     * @var Collection<int, ProjectTypeActionTemplate>
+     */
+    #[ORM\OneToMany(targetEntity: ProjectTypeActionTemplate::class, mappedBy: 'projectType')]
+    private Collection $projectTypeActionTemplates;
+
     public function __construct()
     {
+        $this->id = Uuid::v7(); 
         $this->projects = new ArrayCollection();
+        $this->projectTypeActionTemplates = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -109,6 +118,36 @@ class ProjectType
             // set the owning side to null (unless already changed)
             if ($project->getType() === $this) {
                 $project->setType(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProjectTypeActionTemplate>
+     */
+    public function getProjectTypeActionTemplates(): Collection
+    {
+        return $this->projectTypeActionTemplates;
+    }
+
+    public function addProjectTypeActionTemplate(ProjectTypeActionTemplate $projectTypeActionTemplate): static
+    {
+        if (!$this->projectTypeActionTemplates->contains($projectTypeActionTemplate)) {
+            $this->projectTypeActionTemplates->add($projectTypeActionTemplate);
+            $projectTypeActionTemplate->setProjectType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProjectTypeActionTemplate(ProjectTypeActionTemplate $projectTypeActionTemplate): static
+    {
+        if ($this->projectTypeActionTemplates->removeElement($projectTypeActionTemplate)) {
+            // set the owning side to null (unless already changed)
+            if ($projectTypeActionTemplate->getProjectType() === $this) {
+                $projectTypeActionTemplate->setProjectType(null);
             }
         }
 

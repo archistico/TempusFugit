@@ -8,14 +8,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 class Project
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
+	private ?Uuid $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'projects')]
     #[ORM\JoinColumn(nullable: false)]
@@ -37,14 +38,14 @@ class Project
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $note = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $dataInizio = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dataInizio = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTime $dataFineStimata = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dataFineStimata = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTime $dataFineReale = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dataFineReale = null;
 
     #[ORM\Column(length: 255)]
     private ?string $stato = null;
@@ -93,6 +94,7 @@ class Project
 
     public function __construct()
     {
+        $this->id = Uuid::v7(); 
         $this->actions = new ArrayCollection();
         $this->timeEntries = new ArrayCollection();
         $this->ledgerMovements = new ArrayCollection();
@@ -183,36 +185,36 @@ class Project
         return $this;
     }
 
-    public function getDataInizio(): ?\DateTime
+    public function getDataInizio(): ?\DateTimeImmutable
     {
         return $this->dataInizio;
     }
 
-    public function setDataInizio(\DateTime $dataInizio): static
+    public function setDataInizio(\DateTimeImmutable $dataInizio): static
     {
         $this->dataInizio = $dataInizio;
 
         return $this;
     }
 
-    public function getDataFineStimata(): ?\DateTime
+    public function getDataFineStimata(): ?\DateTimeImmutable
     {
         return $this->dataFineStimata;
     }
 
-    public function setDataFineStimata(?\DateTime $dataFineStimata): static
+    public function setDataFineStimata(?\DateTimeImmutable $dataFineStimata): static
     {
         $this->dataFineStimata = $dataFineStimata;
 
         return $this;
     }
 
-    public function getDataFineReale(): ?\DateTime
+    public function getDataFineReale(): ?\DateTimeImmutable
     {
         return $this->dataFineReale;
     }
 
-    public function setDataFineReale(?\DateTime $dataFineReale): static
+    public function setDataFineReale(?\DateTimeImmutable $dataFineReale): static
     {
         $this->dataFineReale = $dataFineReale;
 

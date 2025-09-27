@@ -6,21 +6,22 @@ use App\Repository\LedgerMovementRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 
 #[ORM\Entity(repositoryClass: LedgerMovementRepository::class)]
 class LedgerMovement
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
+	private ?Uuid $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'ledgerMovements')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Project $project = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $data = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $data = null;
 
     #[ORM\Column(length: 255)]
     private ?string $tipo = null;
@@ -42,6 +43,11 @@ class LedgerMovement
 
     #[ORM\Column]
     private ?bool $pagato = null;
+
+    public function __construct()
+    {
+        $this->id = Uuid::v7(); 
+    }
 
     public function getId(): ?int
     {
@@ -67,12 +73,12 @@ class LedgerMovement
         return $this;
     }
 
-    public function getData(): ?\DateTime
+    public function getData(): ?\DateTimeImmutable
     {
         return $this->data;
     }
 
-    public function setData(\DateTime $data): static
+    public function setData(\DateTimeImmutable $data): static
     {
         $this->data = $data;
 
