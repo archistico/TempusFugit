@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ActionTypeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
@@ -25,6 +27,17 @@ class ActionType
 
     #[ORM\Column]
     private ?bool $fatturabileDefault = null;
+
+    /**
+     * @var Collection<int, Action>
+     */
+    #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'type')]
+    private Collection $actions;
+
+    public function __construct()
+    {
+        $this->actions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -82,6 +95,36 @@ class ActionType
     public function setFatturabileDefault(bool $fatturabileDefault): static
     {
         $this->fatturabileDefault = $fatturabileDefault;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Action>
+     */
+    public function getActions(): Collection
+    {
+        return $this->actions;
+    }
+
+    public function addAction(Action $action): static
+    {
+        if (!$this->actions->contains($action)) {
+            $this->actions->add($action);
+            $action->setType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAction(Action $action): static
+    {
+        if ($this->actions->removeElement($action)) {
+            // set the owning side to null (unless already changed)
+            if ($action->getType() === $this) {
+                $action->setType(null);
+            }
+        }
 
         return $this;
     }
