@@ -56,8 +56,8 @@ class ProjectCrudController extends AbstractCrudController
                 AssociationField::new('type')->setLabel('Tipologia')->autocomplete(),
                 TextField::new('titolo'),
                 MoneyField::new('importoPreventivo')->setCurrency('EUR')->setLabel('Preventivo'),
-                DateField::new('dataInizio')->setLabel('Inizio'),
-                DateField::new('dataFineStimata')->setLabel('Fine stim.'),
+                DateField::new('dataInizio')->setLabel('Inizio')->setFormat('dd/MM/yyyy'),
+                DateField::new('dataFineStimata')->setLabel('Fine stim.')->setFormat('dd/MM/yyyy'),
                 AssociationField::new('stato')->setLabel('Stato')->autocomplete(),
                 $percentIndex,
             ];
@@ -75,9 +75,9 @@ class ProjectCrudController extends AbstractCrudController
 
             ChoiceField::new('condizioniPagamento')->setChoices($condizioniPagamento)->hideOnIndex(),
 
-            DateField::new('dataInizio')->setLabel('Data inizio'),
-            DateField::new('dataFineStimata')->setLabel('Data fine stimata')->hideOnIndex(),
-            DateField::new('dataFineReale')->setLabel('Data fine reale')->hideOnIndex(),
+            DateField::new('dataInizio')->setLabel('Data inizio')->setFormat('dd/MM/yyyy'),
+            DateField::new('dataFineStimata')->setLabel('Data fine stimata')->setFormat('dd/MM/yyyy')->hideOnIndex(),
+            DateField::new('dataFineReale')->setLabel('Data fine reale')->setFormat('dd/MM/yyyy')->hideOnIndex(),
 
             AssociationField::new('stato')->setLabel('Stato')->autocomplete(),
             TextField::new('pathProgetto')->setLabel('Path su disco')->hideOnIndex(),

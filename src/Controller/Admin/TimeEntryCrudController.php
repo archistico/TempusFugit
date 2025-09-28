@@ -49,8 +49,8 @@ class TimeEntryCrudController extends AbstractCrudController
             return [
                 AssociationField::new('project')->setLabel('Progetto'),
                 AssociationField::new('projectAction')->setLabel('Azione')->autocomplete(),
-                DateTimeField::new('startAt')->setLabel('Inizio'),
-                DateTimeField::new('endAt')->setLabel('Fine'),
+                DateTimeField::new('startAt')->setLabel('Inizio')->setFormat('dd/MM/yyyy HH:mm'),
+                DateTimeField::new('endAt')->setLabel('Fine')->setFormat('dd/MM/yyyy HH:mm'),
                 $durataIndex,
                 BooleanField::new('billable')->setLabel('Fatturabile')->renderAsSwitch(false),
             ];
@@ -60,8 +60,8 @@ class TimeEntryCrudController extends AbstractCrudController
         return [
             AssociationField::new('project')->setLabel('Progetto')->autocomplete(),
             AssociationField::new('projectAction')->setLabel('Azione')->autocomplete(),
-            DateTimeField::new('startAt')->setLabel('Inizio'),
-            DateTimeField::new('endAt')->setLabel('Fine')->hideOnIndex(),
+            DateTimeField::new('startAt')->setLabel('Inizio')->setFormat('dd/MM/yyyy HH:mm'),
+            DateTimeField::new('endAt')->setLabel('Fine')->setFormat('dd/MM/yyyy HH:mm')->hideOnIndex(),
             BooleanField::new('billable')->setLabel('Fatturabile')->renderAsSwitch(false),
             TextareaField::new('descrizione')->setLabel('Descrizione')->hideOnIndex(),
 

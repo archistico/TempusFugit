@@ -36,7 +36,7 @@ class CommunicationCrudController extends AbstractCrudController
         return [
             AssociationField::new('project')->setLabel('Progetto')->autocomplete(),
             AssociationField::new('client')->setLabel('Cliente')->autocomplete(),
-            DateTimeField::new('data')->setLabel('Data/Ora'),
+            DateTimeField::new('data')->setLabel('Data/Ora')->setFormat('dd/MM/yyyy HH:mm'),
             ChoiceField::new('tipologia')->setLabel('Tipologia')->setChoices($tipologiaChoices),
             TextareaField::new('comunicazione')->setLabel('Comunicazione')->renderAsHtml(false),
         ];

@@ -35,7 +35,7 @@ class ActionCrudController extends AbstractCrudController
             TextField::new('titolo'),
             TextareaField::new('descrizione')->hideOnIndex(),
             IntegerField::new('stimaMin')->setLabel('Stima (min)'),
-            DateTimeField::new('deadline')->hideOnIndex(),
+            DateTimeField::new('deadline')->setFormat('dd/MM/yyyy HH:mm')->hideOnIndex(),
             AssociationField::new('type')->setLabel('Tipo azione')->autocomplete(),
             AssociationField::new('status')->setLabel('Stato')->autocomplete(),
             BooleanField::new('fatturabile')->renderAsSwitch(false),

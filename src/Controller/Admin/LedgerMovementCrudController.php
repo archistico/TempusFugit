@@ -29,7 +29,7 @@ class LedgerMovementCrudController extends AbstractCrudController
     {
         return [
             AssociationField::new('project')->autocomplete(),
-            DateField::new('data'),
+            DateField::new('data')->setFormat('dd/MM/yyyy'),
             ChoiceField::new('tipo')->setChoices(['DEBITO' => 'DEBITO', 'CREDITO' => 'CREDITO']),
             MoneyField::new('importo')->setCurrency('EUR'),
             TextareaField::new('descrizione')->hideOnIndex(),
