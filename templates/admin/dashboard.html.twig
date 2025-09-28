@@ -70,7 +70,7 @@
 
 <div class="layout">
 
-  <!-- KPI -->
+  <!-- KPI PRINCIPALI -->
   <section class="kpis">
     <div class="kpi">
       <div class="label">Ore oggi</div>
@@ -84,18 +84,117 @@
       <div class="label">Ore mese</div>
       <div class="value">{{ (minsMonth/60)|number_format(2, ',', '.') }} h</div>
     </div>
+    <div class="kpi">
+      <div class="label">Media ore/giorno</div>
+      <div class="value">{{ avgHoursPerDay }} h</div>
+    </div>
     <div class="kpi --accent">
       <div class="label">Efficienza mese</div>
       <div class="value">{{ efficiencyPct }}%</div>
+      {% if efficiencyTrend != 0 %}
+        <div class="sub" style="color: {{ efficiencyTrend > 0 ? 'var(--success)' : 'var(--danger)' }}">
+          {{ efficiencyTrend > 0 ? '↗' : '↘' }} {{ efficiencyTrend|abs }}% vs mese scorso
+        </div>
+      {% endif %}
     </div>
     <div class="kpi">
-      <div class="label">Entrate mese</div>
-      <div class="value">€ {{ entrateMonth|number_format(2, ',', '.') }}</div>
+      <div class="label">Utile mese</div>
+      <div class="value" style="color: {{ utileMese >= 0 ? 'var(--success)' : 'var(--danger)' }}">
+        € {{ utileMese|number_format(2, ',', '.') }}
+      </div>
+      {% if utileLastMonth != 0 %}
+        {% set utileTrend = utileMese - utileLastMonth %}
+        <div class="sub" style="color: {{ utileTrend >= 0 ? 'var(--success)' : 'var(--danger)' }}">
+          {{ utileTrend >= 0 ? '↗' : '↘' }} € {{ utileTrend|abs|number_format(2, ',', '.') }} vs mese scorso
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- KPI SECONDARI -->
+  <section class="kpis" style="margin-top: 12px;">
+    <div class="kpi">
+      <div class="label">Progetti attivi</div>
+      <div class="value">{{ activeProjects }}/{{ totalProjects }}</div>
+      <div class="sub">{{ completionRate }}% completati</div>
     </div>
     <div class="kpi">
-      <div class="label">Spese mese</div>
-      <div class="value">€ {{ speseMonth|number_format(2, ',', '.') }}</div>
+      <div class="label">Azioni completate</div>
+      <div class="value">{{ completedActions }}/{{ totalActions }}</div>
+      <div class="sub">{{ actionCompletionRate }}% completate</div>
     </div>
+    <div class="kpi">
+      <div class="label">Clienti attivi</div>
+      <div class="value">{{ activeClients }}/{{ totalClients }}</div>
+    </div>
+    <div class="kpi" style="color: var(--warn);">
+      <div class="label">Progetti in ritardo</div>
+      <div class="value">{{ overdueProjects }}</div>
+    </div>
+    <div class="kpi" style="color: var(--danger);">
+      <div class="label">Azioni in ritardo</div>
+      <div class="value">{{ overdueActions }}</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Utile anno</div>
+      <div class="value" style="color: {{ utileAnno >= 0 ? 'var(--success)' : 'var(--danger)' }}">
+        € {{ utileAnno|number_format(2, ',', '.') }}
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFRONTO MENSILE -->
+  <section class="cards" style="margin-top: 18px;">
+    <article class="card">
+      <header>
+        <h3>Confronto Mensile</h3>
+        <div class="sub">Mese corrente vs precedente</div>
+      </header>
+      <div class="body pad">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+          <div>
+            <div class="sub" style="margin-bottom: 6px;">Ore lavorate</div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.2rem; font-weight: 600;">{{ (minsMonth/60)|number_format(1, ',', '.') }}h</span>
+              {% if minsLastMonth > 0 %}
+                {% set oreTrend = minsMonth - minsLastMonth %}
+                <span class="chip {{ oreTrend >= 0 ? '--ok' : '--warn' }}">
+                  {{ oreTrend >= 0 ? '↗' : '↘' }} {{ (oreTrend/60)|number_format(1, ',', '.') }}h
+                </span>
+              {% endif %}
+            </div>
+            <div class="sub" style="font-size: 0.8rem;">Mese scorso: {{ (minsLastMonth/60)|number_format(1, ',', '.') }}h</div>
+          </div>
+          
+          <div>
+            <div class="sub" style="margin-bottom: 6px;">Entrate</div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.2rem; font-weight: 600;">€ {{ entrateMonth|number_format(0, ',', '.') }}</span>
+              {% if entrateLastMonth > 0 %}
+                {% set entrateTrend = entrateMonth - entrateLastMonth %}
+                <span class="chip {{ entrateTrend >= 0 ? '--ok' : '--warn' }}">
+                  {{ entrateTrend >= 0 ? '↗' : '↘' }} € {{ entrateTrend|abs|number_format(0, ',', '.') }}
+                </span>
+              {% endif %}
+            </div>
+            <div class="sub" style="font-size: 0.8rem;">Mese scorso: € {{ entrateLastMonth|number_format(0, ',', '.') }}</div>
+          </div>
+          
+          <div>
+            <div class="sub" style="margin-bottom: 6px;">Efficienza</div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.2rem; font-weight: 600;">{{ efficiencyPct }}%</span>
+              {% if efficiencyTrend != 0 %}
+                <span class="chip {{ efficiencyTrend >= 0 ? '--ok' : '--warn' }}">
+                  {{ efficiencyTrend >= 0 ? '↗' : '↘' }} {{ efficiencyTrend|abs }}%
+                </span>
+              {% endif %}
+            </div>
+            <div class="sub" style="font-size: 0.8rem;">Mese scorso: {{ efficiencyLastMonth }}%</div>
+          </div>
+        </div>
+      </div>
+    </article>
   </section>
 
   <!-- LISTE -->
